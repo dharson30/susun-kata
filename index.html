@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Susun Kata Isyarat</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Poppins', sans-serif;
       background-image: url('images/background.png');
       background-size: cover;
       background-position: center bottom;
@@ -33,6 +35,35 @@
     h1 {
       font-size: 2rem;
       margin-bottom: 10px;
+    }
+
+    .user-profile-box {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start; /* Rata kiri */
+      margin-bottom: 20px; /* Jarak ke judul utama */
+      position: absolute; /* Posisi absolut terhadap container */
+      top: 25px;
+      left: 30px;
+    }
+
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%; /* Membuat gambar menjadi bulat */
+      margin-right: 12px; /* Jarak antara ikon dan teks */
+    }
+
+    .user-greeting {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Kita perlu menambahkan ini agar .container bisa menjadi acuan posisi */
+    .container {
+      position: relative;
+      /* ... properti lain yang sudah ada ... */
     }
 
     .user-info {
@@ -107,11 +138,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.682);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 999;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px); /* Untuk dukungan browser Safari */
     }
 
     .popup-content {
@@ -119,7 +152,7 @@
       padding: 30px 20px;
       border-radius: 10px;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.389);
     }
     
     .popup-content input {
@@ -132,14 +165,21 @@
     }
 
     .popup-content button {
-      margin-top: 15px;
-      padding: 8px 16px;
+      margin-top: 25px;
+      padding: 15px 25px;
       font-size: 1rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 6px;
+      font-weight: bold;
+      color: #207e36;
+      border: 3px solid #207e36;
+      border-radius: 60px;
+      transition: background 0.3s ease;
       cursor: pointer;
+    }
+
+    .popup-content button:hover {
+      background-color: #207e36;
+      color: #ffffff;
+      box-shadow: 0px 0px 13px 0px rgba(38, 141, 12, 0.75);  
     }
 
     .popup-content .btn-danger {
@@ -200,8 +240,12 @@
   </div>
 
   <div class="container" id="gameContainer">
+    <div class="user-profile-box">
+        <img src="images/avatar.png" alt="User Icon" class="profile-icon">
+        <span id="userInfo" class="user-greeting"></span>
+    </div>
+
     <h1>Susun Kata Isyarat</h1>
-    <p id="userInfo" class="user-info"></p>
     
     <div class="question" id="questionText"></div>
     <div class="score" id="score">Skor: 0</div>
@@ -275,7 +319,7 @@
         }
         currentUserID = userID;
         
-        userInfoDisplay.innerHTML = `Bermain sebagai: <strong>${currentUserID}</strong>`;
+        userInfoDisplay.innerHTML = `Hi, <strong>${currentUserID}</strong>`;
 
         loginPopup.style.display = "none";
         gameContainer.style.display = "block";
