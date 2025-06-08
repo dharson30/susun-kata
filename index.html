@@ -27,19 +27,13 @@
       padding: 30px;
       text-align: center;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      /* Awalnya disembunyikan */
       display: none;
     }
 
     h1 {
       font-size: 2rem;
       margin-bottom: 10px;
-    }
-
-    .user-info {
-      font-size: 1.1rem;
-      color: #555;
-      margin-top: -5px;
-      margin-bottom: 20px;
     }
 
     .question {
@@ -192,8 +186,6 @@
 
   <div class="container" id="gameContainer">
     <h1>Susun Kata Isyarat</h1>
-    <p id="userInfo" class="user-info"></p>
-    
     <div class="question" id="questionText">Soal 1 dari 7 — Ayo susun kata:</div>
     <div class="score" id="score">Skor: 0</div>
 
@@ -235,7 +227,7 @@
     const questions = ["SETARA", "TIM", "BERSAMA", "ADIL", "RUKUN", "SUKU", "DAMAI"];
     let currentQuestionIndex = 0;
     let score = 0;
-    let currentUserID = null;
+    let currentUserID = null; // Variabel baru untuk menyimpan User ID
 
     const dropZone = document.getElementById("dropZone");
     const choices = document.getElementById("choices");
@@ -244,12 +236,12 @@
     const gameContainer = document.getElementById("gameContainer");
     const loginPopup = document.getElementById("loginPopup");
     const userIDInput = document.getElementById("userIDInput");
-    const userInfoDisplay = document.getElementById("userInfo");
 
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
+    // Fungsi baru untuk memulai game setelah memasukkan ID
     function startGame() {
         const userID = userIDInput.value.trim();
         if (userID === "") {
@@ -257,9 +249,6 @@
             return;
         }
         currentUserID = userID;
-        
-        userInfoDisplay.innerHTML = `Bermain sebagai: <strong>${currentUserID}</strong>`;
-
         loginPopup.style.display = "none";
         gameContainer.style.display = "block";
         loadQuestion();
@@ -277,6 +266,7 @@
       const word = questions[currentQuestionIndex];
       questionText.textContent = `Soal ${currentQuestionIndex + 1} dari ${questions.length} — Ayo susun kata:`;
       
+      // Kosongkan drop-box
       for (let i = 0; i < word.length; i++) {
         const box = document.createElement("div");
         box.className = "drop-box";
@@ -286,6 +276,7 @@
         dropZone.appendChild(box);
       }
       
+      // Tampilkan huruf pilihan
       const shuffled = shuffle(word.split(""));
       for (const letter of shuffled) {
         const el = document.createElement("div");
@@ -311,12 +302,12 @@
     function handleDrop(e) {
       e.preventDefault();
       const letter = e.dataTransfer.getData("text/plain");
-      const targetBox = e.target.closest('.drop-box');
-      if (!targetBox) return;
+      const targetBox = e.currentTarget;
 
-      const choiceToRemove = Array.from(choices.children).find(choice => !choice.style.visibility && choice.dataset.letter === letter);
+      // Hapus gambar dari choice-zone
+      const choiceToRemove = Array.from(choices.children).find(choice => choice.dataset.letter === letter && !choice.hidden);
       if (choiceToRemove) {
-          choiceToRemove.style.visibility = 'hidden';
+          choiceToRemove.hidden = true; // Sembunyikan untuk mencegah drag ulang
       }
 
       const img = document.createElement("img");
@@ -341,7 +332,7 @@
           showPopup();
         } else {
           alert("Salah. Coba lagi!");
-          resetLevel();
+          loadQuestion(); // Muat ulang soal yang sama
         }
       }
     }
@@ -355,6 +346,7 @@
       }
     }
     
+    // Fungsi baru untuk mengulang kata saat ini
     function resetLevel() {
         loadQuestion();
     }
@@ -364,7 +356,6 @@
       score = 0;
       currentUserID = null;
       scoreDisplay.textContent = "Skor: 0";
-      userInfoDisplay.innerHTML = "";
       document.getElementById("finishPopup").style.display = "none";
       document.getElementById("confirmPopup").style.display = "none";
       gameContainer.style.display = "none";
@@ -375,8 +366,6 @@
     function showPopup() {
       document.getElementById("popup").style.display = "flex";
     }
-
-
 
     function closePopup() {
       document.getElementById("popup").style.display = "none";
@@ -391,39 +380,29 @@
       document.getElementById("confirmPopup").style.display = "none";
     }
     
-    async function saveScore() {
+    // Fungsi baru untuk menyimpan skor
+    function saveScore() {
         if (!currentUserID) return;
         try {
-            await fetch('/api/saveScore', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userId: currentUserID, score: score }),
-            });
-        } catch (e) {
-            console.error("Gagal menyimpan skor ke server:", e);
-        }
-    }
-
-    async function finishGame() {
-        await saveScore();
-
-        let userHighScore = score;
-        try {
-            const response = await fetch(`/api/getScore?userId=${currentUserID}`);
-            const data = await response.json();
-            if (data && typeof data.score !== 'undefined') {
-                userHighScore = data.score;
+            let allScores = JSON.parse(localStorage.getItem('gameScores')) || {};
+            const existingScore = allScores[currentUserID] || 0;
+            if (score > existingScore) {
+                allScores[currentUserID] = score;
+                localStorage.setItem('gameScores', JSON.stringify(allScores));
             }
         } catch (e) {
-            console.error("Gagal mengambil skor tertinggi:", e);
-            userHighScore = score; 
+            console.error("Gagal menyimpan skor:", e);
         }
-
-        const finalText = `Permainan selesai, <strong>${currentUserID}</strong>!
+    }
+    
+    function finishGame() {
+        saveScore();
+        const allScores = JSON.parse(localStorage.getItem('gameScores')) || {};
+        const userHighScore = allScores[currentUserID] || score;
+        
+        const finalText = `Permainan selesai, ${currentUserID}!
         <br>Skor akhir kamu: <strong>${score}</strong> dari ${questions.length}.
-        <br>Skor tertinggi kamu di server: <strong>${userHighScore}</strong>.`;
+        <br>Skor tertinggi kamu: <strong>${userHighScore}</strong>.`;
         
         document.getElementById("finalScoreText").innerHTML = finalText;
         document.getElementById("finishPopup").style.display = "flex";
@@ -444,6 +423,8 @@
           confirmPopup.style.display = "none";
       }
     };
+
+    // Game tidak dimulai secara otomatis, menunggu input userID
   </script>
 </body>
 </html>
