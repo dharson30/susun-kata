@@ -45,6 +45,7 @@
     .question {
       font-size: 1.2rem;
       margin-bottom: 10px;
+      font-weight: bold;
     }
 
     .score {
@@ -83,6 +84,7 @@
     }
 
     .btn {
+      display: inline-block;
       padding: 10px 20px;
       font-size: 1rem;
       border: none;
@@ -91,6 +93,8 @@
       color: white;
       cursor: pointer;
       transition: background 0.3s ease;
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .btn:hover {
@@ -142,6 +146,11 @@
       background-color: #e74c3c;
     }
 
+    .leaderboard-link-container {
+      text-align: center;
+      margin: 20px 0 40px 0;
+    }
+    
     .panduan {
       margin: 40px auto;
       text-align: center;
@@ -190,27 +199,20 @@
     </div>
   </div>
 
-  <div class="popup-content">
-      <h2>Selamat Datang!</h2>
-      <p>Silakan masukkan User ID Anda untuk memulai.</p>
-      <input type="text" id="userIDInput" placeholder="Contoh: Budi01">
-      <br>
-      <button onclick="startGame()">Mulai Game</button>
-      <p style="margin-top:15px; font-size:0.9rem;"><a href="/leaderboard.html">Lihat Papan Peringkat</a></p>
-    </div>
-
   <div class="container" id="gameContainer">
     <h1>Susun Kata Isyarat</h1>
     <p id="userInfo" class="user-info"></p>
     
-    <div class="question" id="questionText">Soal 1 dari 7 — Ayo susun kata:</div>
+    <div class="question" id="questionText"></div>
     <div class="score" id="score">Skor: 0</div>
 
     <div class="drop-zone" id="dropZone"></div>
     <div class="choice-zone" id="choices"></div>
 
-    <button class="btn" onclick="resetLevel()">🔄 Ulangi Kata</button>
-    <button class="btn" style="margin-top: 10px;" onclick="confirmFinish()">⏹️ Selesai Sekarang</button>
+    <div class="button-group" style="margin-top: 20px;">
+        <button class="btn" onclick="resetLevel()">🔄 Ulangi Kata</button>
+        <button class="btn" style="margin-left: 10px;" onclick="confirmFinish()">⏹️ Selesai Sekarang</button>
+    </div>
   </div>
 
   <div id="popup" class="popup">
@@ -232,13 +234,12 @@
     <div class="popup-content">
       <p id="finalScoreText">Skor akhir kamu:</p>
       <button onclick="resetGame()">Main Lagi</button>
+      <p style="margin-top:15px; font-size:0.9rem;"><a href="/leaderboard.html">Lihat Papan Peringkat</a></p>
     </div>
   </div>
 
-  <div class="popup-content">
-    <p id="finalScoreText">Skor akhir kamu:</p>
-    <button onclick="resetGame()">Main Lagi</button>
-    <p style="margin-top:15px; font-size:0.9rem;"><a href="/leaderboard.html">Lihat Papan Peringkat</a></p>
+  <div class="leaderboard-link-container">
+      <a href="/leaderboard.html" class="btn" style="background-color: #28a745;">🏆 Lihat Papan Peringkat</a>
   </div>
 
   <div class="panduan">
@@ -247,6 +248,7 @@
   </div>
 
   <script>
+    // ... (Seluruh kode JavaScript Anda tetap sama, tidak perlu diubah) ...
     const questions = ["SETARA", "TIM", "BERSAMA", "ADIL", "RUKUN", "SUKU", "DAMAI"];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -390,8 +392,6 @@
     function showPopup() {
       document.getElementById("popup").style.display = "flex";
     }
-
-
 
     function closePopup() {
       document.getElementById("popup").style.display = "none";
