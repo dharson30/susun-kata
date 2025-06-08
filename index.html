@@ -264,7 +264,7 @@
       choices.innerHTML = "";
 
       const word = questions[currentQuestionIndex];
-      questionText.textContent = `Soal ${currentQuestionIndex + 1} dari ${questions.length} — Ayo susun kata:`;
+      questionText.textContent = `Soal ${currentQuestionIndex + 1} dari ${questions.length} — Ayo susun kata: ${word}`;
       
       // Kosongkan drop-box
       for (let i = 0; i < word.length; i++) {
