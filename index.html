@@ -375,10 +375,7 @@
       const targetBox = e.target.closest('.drop-box');
       if (!targetBox) return;
 
-      const choiceToRemove = Array.from(choices.children).find(choice => !choice.style.visibility && choice.dataset.letter === letter);
-      if (choiceToRemove) {
-          choiceToRemove.style.visibility = 'hidden';
-      }
+      // Kode yang menyembunyikan gambar asli sudah dihapus dari sini
 
       const img = document.createElement("img");
       img.src = `images/${letter}.png`;
